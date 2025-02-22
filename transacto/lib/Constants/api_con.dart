@@ -1,6 +1,12 @@
 
 final String baseUrl = "http://localhost:5000/";
 
+
+//Auth
+
+final String logIn = "api/auth/signup";
+final String signIn = "api/auth/login";
+
 //Customer
 final String registerCustomer = "api/customers/create";
 final String getCustomer = "api/customers/get";

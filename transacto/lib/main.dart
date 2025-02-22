@@ -4,6 +4,7 @@ import 'package:transacto/Constants/constant_color.dart';
 import 'Controller/customer_controller.dart';
 import 'Controller/product_controller.dart';
 import 'Controller/vendor_controller.dart';
+import 'View/Auth/Login/login_screen.dart';
 import 'View/Dashboard_/Payments/Vendor_Order/PaymentVendorPage.dart';
 import 'helper/size_config.dart';
 import 'package:get/get.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
                 colorScheme: ColorScheme.fromSeed(seedColor: kcPrimary),
                 primaryColor: Color(0xFFF3D48A),
                 textTheme: GoogleFonts.poppinsTextTheme()),
-            home: VendorPaymentPage(),
+            home: LoginPage(),
           );
         },
       );
