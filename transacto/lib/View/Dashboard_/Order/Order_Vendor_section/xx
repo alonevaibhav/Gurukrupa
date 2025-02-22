@@ -1,0 +1,315 @@
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../../Controller/Vendor_controller.dart';
+import '../../../../Controller/order_Vendor_controller.dart';
+import '../../../../Controller/product_controller.dart';
+
+// Dialog for adding a new Vendor order item
+
+class AddVendorOrderDialog extends StatelessWidget {
+  final VendorOrderController orderController = Get.find();
+  final VendorController VendorController = Get.find();
+  final ProductController productController = Get.find();
+
+  final Rx<Vendor?> selectedVendor = Rx<Vendor?>(null);
+  final Rx<Product?> selectedProduct = Rx<Product?>(null);
+  final TextEditingController quantityController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+
+  AddVendorOrderDialog({Key? key}) : super(key: key) {
+    if (VendorController.Vendors.isNotEmpty) {
+      selectedVendor.value = VendorController.Vendors.first;
+    }
+    if (productController.products.isNotEmpty) {
+      selectedProduct.value = productController.products.first;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 400,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3E2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Add Order Item",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+
+              // Vendor Dropdown
+              Obx(() => DropdownButton<Vendor>(
+                isExpanded: true,
+                value: selectedVendor.value,
+                onChanged: (Vendor? newValue) => selectedVendor.value = newValue,
+                items: VendorController.Vendors.map((Vendor) => DropdownMenuItem(
+                  value: Vendor,
+                  child: Text(Vendor.name),
+                )).toList(),
+              )),
+              const SizedBox(height: 16),
+
+              // Product Dropdown
+              Obx(() => DropdownButton<Product>(
+                isExpanded: true,
+                value: selectedProduct.value,
+                onChanged: (Product? newValue) => selectedProduct.value = newValue,
+                items: productController.products.map((product) => DropdownMenuItem(
+                  value: product,
+                  child: Text(product.name),
+                )).toList(),
+              )),
+              const SizedBox(height: 16),
+
+              // Quantity Field
+              TextField(
+                controller: quantityController,
+                decoration: const InputDecoration(
+                    labelText: "Quantity",
+                    border: OutlineInputBorder()),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+
+              // Amount Field
+              TextField(
+                controller: amountController,
+                decoration: const InputDecoration(
+                    labelText: "Amount",
+                    border: OutlineInputBorder()),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: 24),
+
+              // Add Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    print("Add Order Button Pressed");
+
+                    if (selectedVendor.value == null ||
+                        selectedProduct.value == null ||
+                        quantityController.text.isEmpty ||
+                        amountController.text.isEmpty) {
+                      print("Validation failed: Please fill all fields");
+                      Get.snackbar("Error", "Please fill all fields");
+                      return;
+                    }
+
+                    final quantity = int.tryParse(quantityController.text);
+                    final amount = double.tryParse(amountController.text);
+
+                    if (quantity == null || amount == null) {
+                      print("Validation failed: Invalid number format");
+                      Get.snackbar("Error", "Invalid number format");
+                      return;
+                    }
+
+                    print("Calling postOrder...");
+                    print("Vendor ID: ${selectedVendor.value!.id}");
+                    print("Product ID: ${selectedProduct.value!.id}");
+                    print("Quantity: $quantity");
+                    print("Amount: $amount");
+
+                    await orderController.postOrder(
+                      selectedVendor.value!.id as String,
+                      selectedProduct.value!.id as String,
+                      quantity,
+                      amount,
+                    );
+
+                    print("Order creation process completed");
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                  child: const Text("Add Order Item"),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EditVendorOrderDialog extends StatelessWidget {
+  final VendorOrderItem order;
+  final VendorOrderController orderController = Get.find();
+  final VendorController VendorController = Get.find();
+  final ProductController productController = Get.find();
+
+  final TextEditingController quantityController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  final Rx<Vendor?> selectedVendor = Rx<Vendor?>(null);
+  final Rx<Product?> selectedProduct = Rx<Product?>(null);
+
+  EditVendorOrderDialog({required this.order, Key? key}) : super(key: key) {
+    quantityController.text = order.quantity.toString();
+    amountController.text = order.amount.toString();
+
+    selectedVendor.value = VendorController.Vendors.firstWhere(
+          (c) => c.id == order.VendorId,
+      orElse: () => VendorController.Vendors.first,
+    );
+
+    selectedProduct.value = productController.products.firstWhere(
+          (p) => p.id == order.productId,
+      orElse: () => productController.products.first,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 400,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3E2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Edit Order Item",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+
+              // Vendor Dropdown
+              Obx(() => DropdownButton<Vendor>(
+                isExpanded: true,
+                value: selectedVendor.value,
+                onChanged: (Vendor? newValue) => selectedVendor.value = newValue,
+                items: VendorController.Vendors.map((Vendor) => DropdownMenuItem(
+                  value: Vendor,
+                  child: Text(Vendor.name),
+                )).toList(),
+              )),
+              const SizedBox(height: 16),
+
+              // Product Dropdown
+              Obx(() => DropdownButton<Product>(
+                isExpanded: true,
+                value: selectedProduct.value,
+                onChanged: (Product? newValue) => selectedProduct.value = newValue,
+                items: productController.products.map((product) => DropdownMenuItem(
+                  value: product,
+                  child: Text(product.name),
+                )).toList(),
+              )),
+              const SizedBox(height: 16),
+
+              // Quantity Field
+              TextField(
+                controller: quantityController,
+                decoration: const InputDecoration(
+                    labelText: "Quantity",
+                    border: OutlineInputBorder()),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+
+              // Amount Field
+              TextField(
+                controller: amountController,
+                decoration: const InputDecoration(
+                    labelText: "Amount",
+                    border: OutlineInputBorder()),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: 24),
+
+              // Update Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final quantity = int.tryParse(quantityController.text);
+                    final amount = double.tryParse(amountController.text);
+
+                    if (selectedVendor.value == null ||
+                        selectedProduct.value == null ||
+                        quantity == null ||
+                        amount == null) {
+                      Get.snackbar("Error", "Invalid input values");
+                      return;
+                    }
+
+                    final updatedOrder = VendorOrderItem(
+                      id: order.id,
+                      VendorId: selectedVendor.value!.id as String,
+                      VendorName: selectedVendor.value!.name ,
+                      productId: selectedProduct.value!.id as String,
+                      productName: selectedProduct.value!.name,
+                      quantity: quantity,
+                      amount: amount,
+                    );
+
+                    await orderController.updateOrder(updatedOrder);
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                  child: const Text("Update Order Item"),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DeleteDialog extends StatelessWidget {
+  final String itemName;
+  final VoidCallback onConfirm;
+
+  const DeleteDialog({
+    Key? key,
+    required this.itemName,
+    required this.onConfirm,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Delete $itemName?"),
+      content: const Text("This action cannot be undone."),
+      actions: [
+        TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancel")
+        ),
+        ElevatedButton(
+          onPressed: () {
+            onConfirm();
+            Get.back();
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          child: const Text("Delete"),
+        ),
+      ],
+    );
+  }
+}

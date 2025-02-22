@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../Components/AppBar/Header.dart';
 import '../../Constants/constant_color.dart';
-import '../Dashboard_/History/History_Customar_page/PageHistoryCustomer.dart';
-import '../Dashboard_/History/History_Vendor_page/PageHistoryVendor.dart';
-import '../Dashboard_/Order/Order_Customar_section/Customar_page.dart';
-import '../Dashboard_/Order/Order_Vender_section/Vendor_page.dart';
 import '../Dashboard_/Payments/Customer_Order/PaymentCustomerPage.dart';
 import '../Dashboard_/Payments/Vendor_Order/PaymentVendorPage.dart';
 
@@ -140,36 +136,36 @@ class BaseScaffold extends StatelessWidget {
               if (subItem == 'Customer') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => CustomerListPage()), // Navigate to Monucumer
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to Monucumer
                 );
               }  else if (subItem == 'Vendor') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => OrderVenderListPage()), // Navigate to VendorPage
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to VendorPage
                 );
               }
             } else if (historyPage) {
               if (subItem == 'Customer') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HistoryCustomarPage()), // Navigate to Monucumer
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to Monucumer
                 );
               }  else if (subItem == 'Vendor') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => PageHistoryVendor()), // Navigate to VendorPage
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to VendorPage
                 );
               }
             } else if (paymentPage) {
               if (subItem == 'Customer') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => CustomerPaymentsPage()), // Navigate to Monucumer
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to Monucumer
                 );
               }  else if (subItem == 'Vendor') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => PaymentVendorPage()), // Navigate to VendorPage
+                  MaterialPageRoute(builder: (context) => VendorPaymentPage()), // Navigate to VendorPage
                 );
               }
             }

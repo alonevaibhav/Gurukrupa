@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../View/Dashboard_/History/History_Customar_page/PageHistoryCustomer.dart';
-import '../../View/Dashboard_/History/History_Vendor_page/PageHistoryVendor.dart';
-import '../../View/Dashboard_/Order/Order_Customar_section/Customar_page.dart';
-import '../../View/Dashboard_/Order/Order_Vender_section/Vendor_page.dart';
+import '../../View/Customer/customer.dart';
+import '../../View/Dashboard_/Order/Order_Vendor_section/Vendor_page.dart';
+import '../../View/Dashboard_/Order/Order_customer_section/customer_page.dart';
 import '../../View/Dashboard_/Payments/Customer_Order/PaymentCustomerPage.dart';
 import '../../View/Dashboard_/Payments/Vendor_Order/PaymentVendorPage.dart';
+import '../../View/Vendor/vendor.dart';
+import '../../View/product/product.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -24,8 +25,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       title: isMobile || isTablet
           ? _buildMobileTabletHeader(context)
           : _buildDesktopHeader(context),
-      // If you want to include a Drawer for mobile/tablet, uncomment below:
-      // drawer: isMobile || isTablet ? _buildDrawer(context) : null
     );
   }
 
@@ -118,32 +117,28 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         _buildTextButton(
           text: "Customer",
           onPressed: () {
-            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CustomerListPage()),
+                MaterialPageRoute(builder: (context) => CustomerPage()),
               );
-            };
           },
         ),
         _buildTextButton(
           text: "Vendor",
           onPressed: () {
-            onPressed: () {
-              // Your logic here, without navigation
-              print("Contact button pressed.");
-              // You can add any action you want here
-            };
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VendorPage()),
+            );
           },
         ),
         _buildTextButton(
           text: "Product",
           onPressed: () {
-            onPressed: () {
-              // Your logic here, without navigation
-              print("Contact button pressed.");
-              // You can add any action you want here
-            };
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProductPage()),
+            );
           },
         ),
 
@@ -156,22 +151,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => subItem == "Customer"
-                      ? CustomerListPage()
-                      : OrderVenderListPage()),
-            );
-          },
-        ),
-        const SizedBox(width: 25),
-        _buildDropdownMenu(
-          mainItem: "History",
-          subItems: ["Customer", "Vendor"],
-          onSubItemPressed: (subItem) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => subItem == "Customer"
-                      ? HistoryCustomarPage()
-                      : PageHistoryVendor()),
+                      ? CustomerOrderPage()
+                      : OrderPage()),
             );
           },
         ),
@@ -184,8 +165,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => subItem == "Customer"
-                      ? CustomerPaymentsPage()
-                      : PaymentVendorPage()),
+                      ? PaymentPage()
+                      : VendorPaymentPage()),
             );
           },
         ),
